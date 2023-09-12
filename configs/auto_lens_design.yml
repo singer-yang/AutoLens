@@ -1,0 +1,24 @@
+# => experiment options
+DEBUG: True
+brute_force: True
+EXP_NAME: '6P exp'
+seed: 1
+
+# Experiment settings
+lrs: [5e-4, 1e-4, 1e-1, 1e-4]
+ai_lr_decay: 0.1
+curriculum_steps: 5
+
+# Design spec
+HFOV: 0.7
+FNUM: 2.0
+FNUM_START: 2.8
+DIAG: 7.66
+DIAG_START: 4
+
+# Brute force search
+ai_degree: 6
+flange: 1.2
+rff: 0.9
+d_aper: 0.2
+element: 6
