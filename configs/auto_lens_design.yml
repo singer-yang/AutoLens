@@ -1,7 +1,7 @@
 # => experiment options
 DEBUG: True
 brute_force: True
-EXP_NAME: '6P exp'
+EXP_NAME: '6P, 80deg, F/2.0, 7.66mm sensor, lens design'
 seed: 1
 
 # Experiment settings
@@ -12,11 +12,12 @@ curriculum_steps: 5
 # Design spec
 HFOV: 0.7
 FNUM: 2.0
-FNUM_START: 2.8
 DIAG: 7.66
+
+FNUM_START: 2.8
 DIAG_START: 4
 
-# Brute force search
+# Random initialization
 ai_degree: 6
 flange: 1.2
 rff: 0.9
