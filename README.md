@@ -7,6 +7,9 @@ Automated lens design from scratch.
 1. clone or download this repo
 2. run ```python auto_lens_design.py```
 
+or
+
+[Click here](https://colab.research.google.com/github/singer-yang/AutoLens/blob/main/auto_lens_design.ipynb) to run it in Google Colab.
 
 #### Lens Design Examples
 
