@@ -426,48 +426,7 @@ class Aspheric(Surface):
 
             return ray
 
-        # Spheric surface
-        elif self.ai is None and self.k==0:
-            # -------------------------------------
-            # Intersection
-            # ------------------------------------- 
-            
-            # Solve: (o + d*t -c)^2 = r^2. c: circle center, r: radius of circle
-            # self.c positive: center in the right
-            center_z = self.d + 1/self.c 
-            term_b = 2 * (ray.o[...,0]*ray.d[...,0]+ray.o[...,1]*ray.d[...,1]+(ray.o[...,2]-center_z)*ray.d[...,2])
-            term_c = ray.o[...,0]**2 + ray.o[...,1]**2 + (ray.o[...,2]-center_z)**2 - (1/self.c)**2
-
-            if self.c > 0:
-                if forward:
-                    t = (-term_b - torch.sqrt(term_b**2 - 4*term_c))/2
-                else:
-                    t = (-term_b + torch.sqrt(term_b**2 - 4*term_c))/2
-            else:
-                if forward:
-                    t = (-term_b + torch.sqrt(term_b**2 - 4*term_c))/2
-                else:
-                    t = (-term_b - torch.sqrt(term_b**2 - 4*term_c))/2
-
-            # => Update position
-            new_o = ray.o + t.unsqueeze(-1) * ray.d
-            valid = (new_o[...,0]**2 + new_o[...,1]**2 <= self.r**2) & (t>=0) & (ray.ra>0)
-            new_o[~valid] = ray.o[~valid]
-            ray.o = new_o
-
-            # => Update validity
-            ray.ra = ray.ra * valid
-            
-
-            # -------------------------------------
-            # Refraction
-            # ------------------------------------- 
-            ray = self._refract(ray, eta)
-            
-            return ray
-
-
-        # Aspheric surface
+        # Spherical and aspheric surface
         else:
             # -------------------------------------
             # Intersection
