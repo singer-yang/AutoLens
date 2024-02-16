@@ -252,6 +252,17 @@ class Surface():
         sx, sy = self.dgd(x, y)
         sz = self.dhd(z)
         return s, sx*dx + sy*dy + sz*dz
+    
+
+    def surf_dict(self):
+        surf_dict = {
+            'type': self.__class__.__name__,
+            'r': self.r,
+            'd': self.d,
+            'is_square': self.is_square
+        }
+
+        return surf_dict
 
 
 class Aspheric(Surface):
@@ -813,3 +824,37 @@ class Aspheric(Surface):
         z2 = torch.full_like(x2, self.d.item())
         o2 = torch.stack((x2,y2,z2), 1)
         return o2
+    
+
+    def surf_dict(self):
+        """ Return a dict of surface.
+        """
+        if self.c.item() == 0:
+            surf_dict = {
+                'type': 'Stop',
+                'r': self.r,
+                'c': self.c.item(),
+                'd': self.d.item(),
+                }
+        elif self.ai is None and self.k == 0:
+            surf_dict = {
+                'type': 'Spheric',
+                'r': self.r,
+                'c': self.c.item(),
+                'roc': 1/self.c.item(),
+                'd': self.d.item(),
+                }
+        else:
+            surf_dict = {
+                'type': 'Aspheric',
+                'r': self.r,
+                'c': self.c.item(),
+                'd': self.d.item(),
+                'k': self.k.item(),
+                'ai': [],
+                }
+            for i in range(1, self.ai_degree+1):
+                exec(f'surf_dict[\'ai{2*i}\'] = self.ai{2*i}.item()')
+                surf_dict['ai'].append(eval(f'self.ai{2*i}.item()'))
+
+        return surf_dict

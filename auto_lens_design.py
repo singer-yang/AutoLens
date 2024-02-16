@@ -79,6 +79,7 @@ def curriculum_learning(lens, args):
 
         lens.analysis(save_name=f'{result_dir}/step{step}_starting_point', zmx_format=True)
         lens.write_lensfile(f'{result_dir}/step{step}_starting_point.txt', write_zmx=True)
+        lens.write_lens_json(f'{result_dir}/step{step}_starting_point.json')
         logging.info(f'==> Curriculum learning step {step}, target: FOV {round(lens.hfov * 2 * 57.3, 2)}, DIAG {round(2 * lens.r_last, 2)}mm, F/{lens.fnum}.')
         
         # ==> Lens design using RMS errors
@@ -125,4 +126,5 @@ if __name__=='__main__':
 
     logging.info(f'Actual: FOV {lens.hfov}, IMGH {lens.r_last}, F/{lens.fnum}.')
     lens.write_lensfile(f'{result_dir}/final_lens.txt', write_zmx=True)
+    lens.write_lens_json(f'{result_dir}/final_lens.json')
     lens.analysis(save_name=f'{result_dir}/final_lens', zmx_format=True)

@@ -3,6 +3,7 @@
 import torch
 import glob
 import random
+import json
 import cv2 as cv
 import warnings
 import statistics
@@ -145,20 +146,28 @@ class Lensgroup():
             post_computation (bool): compute fnum, fov, foclen or not.
             sensor_res (list): sensor resolution.
         """
-        self.surfaces, self.materials, self.r_last, d_last = self.read_lensfile(filename, use_roc)
-        
-        self.d_sensor = d_last + self.surfaces[-1].d.item()
-        self.focz = self.d_sensor
+        if filename[-4:] == '.txt':
+            self.surfaces, self.materials, self.r_last, d_last = self.read_lensfile(filename, use_roc)
+            
+            self.d_sensor = d_last + self.surfaces[-1].d.item()
+            self.focz = self.d_sensor
 
-        self.find_aperture()
-        self.prepare_sensor(sensor_res)
+            self.find_aperture()
+            self.prepare_sensor(sensor_res)
 
-        if post_computation:
-            self.post_computation()
+            if post_computation:
+                self.post_computation()
 
-        if self.filter:
-            self.surfaces[-1].square = True
-            self.surfaces[-2].square = True
+            if self.filter:
+                self.surfaces[-1].square = True
+                self.surfaces[-2].square = True
+
+        elif filename[-5:] == '.json':
+            self.sensor_res = sensor_res
+            self.read_lens_json(filename)
+
+        else:
+            raise Exception('Unknown file type.')
         
 
     def load_external(self, surfaces, materials, r_last, d_sensor):
@@ -2350,6 +2359,7 @@ class Lensgroup():
                             self.correct_shape(d_aper=0.1)
 
                     self.write_lensfile(f'{result_dir}/iter{i}.txt', write_zmx=False)
+                    self.write_lens_json(f'{result_dir}/iter{i}.json')
                     self.analysis(f'{result_dir}/iter{i}', zmx_format=True, plot_invalid=True, multi_plot=False)
 
 
@@ -2573,6 +2583,68 @@ class Lensgroup():
         if write_zmx:
             filename = filename[:-4] + '.zmx'
             self.write_zmx(filename)
+
+
+    def write_lens_json(self, filename='./test.json'):
+        """ Write the lens into .json file.
+        """
+        data = {}
+        data['foclen'] = self.foclen
+        data['fnum'] = self.fnum
+        data['r_last'] = self.r_last
+        data['d_sensor'] = self.d_sensor
+        data['sensor_size'] = self.sensor_size
+        data['surfaces'] = []
+        for i, s in enumerate(self.surfaces):
+            surf_dict = s.surf_dict()
+            
+            if i < len(self.surfaces) - 1:
+                surf_dict['d_next'] = self.surfaces[i+1].d.item() - self.surfaces[i].d.item()
+            else:
+                surf_dict['d_next'] = self.d_sensor - self.surfaces[i].d.item()
+
+            surf_dict['mat1'] = self.materials[i].name
+            surf_dict['mat2'] = self.materials[i+1].name
+            
+            data['surfaces'].append(surf_dict)
+
+        with open(filename, 'w') as f:
+            json.dump(data, f, indent=4)
+
+
+    def read_lens_json(self, filename='./test.json'):
+        """ Read the lens from .json file.
+        """
+        self.surfaces = []
+        self.materials = []
+        with open(filename, 'r') as f:
+            data = json.load(f)
+            for surf_dict in data['surfaces']:
+                
+                if surf_dict['type'] == 'Aspheric':
+                    s = Aspheric(r=surf_dict['r'], d=surf_dict['d'], c=surf_dict['c'], k=surf_dict['k'], ai=surf_dict['ai'], device=self.device)
+
+                elif surf_dict['type'] == 'Stop':
+                    s = Aspheric(r=surf_dict['r'], d=surf_dict['d'], c=surf_dict['c'], device=self.device)
+                
+                elif surf_dict['type'] == 'Spheric':
+                    s = Aspheric(r=surf_dict['r'], d=surf_dict['d'], c=surf_dict['c'], device=self.device)
+                
+                else:
+                    raise Exception('Surface type not implemented.')
+                
+                self.surfaces.append(s)
+                self.materials.append(Material(surf_dict['mat1']))
+
+        self.materials.append(Material(surf_dict['mat2']))
+        self.r_last = data['r_last']
+        self.d_sensor = data['d_sensor']
+
+        # After loading lens file
+        self.find_aperture()
+        self.prepare_sensor(self.sensor_res)
+        self.diff_surf_range = self.find_diff_surf()
+        self.post_computation()
 
 
     def write_zmx(self, filename='./test.zmx'):
