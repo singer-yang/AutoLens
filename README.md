@@ -5,7 +5,8 @@ Automated lens design from scratch.
 #### How to run
 
 1. clone or download this repo
-2. run ```python auto_lens_design.py```
+2. run ```python hello_deeplens.py```
+3. run ```python auto_lens_design.py```
 
 or
 
@@ -24,6 +25,17 @@ or
 <div style="text-align:center;">
     <img src="imgs/lens_design.png" alt="AutoLens" style="width:800px; height:550px;"/>
 </div>
+
+3. An aspherical lens (optimizing for 50k iterations) with outstanding optical performance.
+
+<div style="text-align:center;">
+    <img src="imgs/cellphone.png" alt="AutoLens" style="width:500px"/>
+</div>
+
+
+#### News and updates
+
+More code and demos will be updated at https://github.com/singer-yang/DeepLens, we are aiming for next-generation differentiable optical design!
 
 #### If you find this repo helpful, please cite our paper:
 
