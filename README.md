@@ -29,7 +29,7 @@ or
 3. An aspherical lens (optimizing for 50k iterations) with outstanding optical performance.
 
 <div style="text-align:center;">
-    <img src="imgs/cellphone.png" alt="AutoLens" style="width:500px"/>
+    <img src="imgs/cellphone_example.png" alt="AutoLens" style="width:800px"/>
 </div>
 
 
