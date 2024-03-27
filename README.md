@@ -1,16 +1,18 @@
 # AutoLens
 
-Automated lens design from scratch.
+Automated lens design from scratch using [DeepLens](https://github.com/singer-yang/DeepLens).
+
+Why AutoLens performs better than Zemax/CodeV lens design: **gradient calculation + Adam optimizer = better optimization capability!**
 
 #### How to run
 
 1. clone or download this repo
-2. run ```python hello_deeplens.py```
-3. run ```python auto_lens_design.py```
+2. run ``python auto_lens_design.py``
 
 or
 
 [Click here](https://colab.research.google.com/github/singer-yang/AutoLens/blob/main/auto_lens_design.ipynb) to run it in Google Colab.
+
 
 #### Lens Design Examples
 
@@ -33,10 +35,6 @@ or
 </div>
 
 
-#### News and updates
-
-More code and demos will be updated at https://github.com/singer-yang/DeepLens, we are aiming for next-generation differentiable optical design!
-
 #### If you find this repo helpful, please cite our paper:
 
 ```
@@ -48,7 +46,6 @@ More code and demos will be updated at https://github.com/singer-yang/DeepLens, 
 }
 ```
 
-
 #### License
 
-<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">Creative Commons Attribution-NonCommercial 4.0 International License</a>.
+`<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc/4.0/88x31.png" />``</a><br />`This work is licensed under a `<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">`Creative Commons Attribution-NonCommercial 4.0 International License `</a>`.
