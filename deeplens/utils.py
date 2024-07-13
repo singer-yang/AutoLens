@@ -5,7 +5,6 @@ import cv2 as cv
 from glob import glob
 from tqdm import tqdm
 import torch
-import lpips
 import logging
 from skimage.metrics import peak_signal_noise_ratio as compare_psnr
 from skimage.metrics import structural_similarity as compare_ssim
@@ -34,18 +33,6 @@ def batch_SSIM(img, img_clean, multichannel=True):
     for i in range(Img.shape[0]):
         SSIM += compare_ssim(Img_clean[i,...], Img[i,...], channel_axis=0)
     return round(SSIM/Img.shape[0], 4)
-
-
-def batch_LPIPS(img, img_clean):
-    """ Compute LPIPS loss for image batch.
-        
-        # TODO: donot directly use this func as it creates a network every time
-    """
-    device = img.device
-    loss_fn = lpips.LPIPS(net='vgg', spatial=True)  
-    loss_fn.to(device)
-    dist = loss_fn.forward(img, img_clean)
-    return dist.mean().item()
 
 
 # ==================================

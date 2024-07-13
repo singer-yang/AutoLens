@@ -2159,10 +2159,6 @@ class GeoLens(DeepObj):
                 x = torch.Tensor(np.array([[-s.r], [-s.r], [s.r], [s.r]])).to(self.device)
                 plot(ax, z_bound, x, color)
 
-            # Thin lens
-            elif isinstance(s, ThinLens):
-                ax.annotate('', xy=(s.d, s.r), xytext=(s.d, -s.r), arrowprops=dict(arrowstyle='<->', color='black'))
-
             # Aperture
             elif isinstance(s, Aperture):
                 draw_aperture(ax, s, color='orange')

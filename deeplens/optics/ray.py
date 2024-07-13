@@ -58,10 +58,7 @@ class Ray(DeepObj):
         
         if self.coherent:
             if t.min() > 100 and torch.get_default_dtype() == torch.float32:
-                raise Warning('Always use float64 in coherent ray tracing.')
-                # first propagation, long distance, in air
-                opd = (self.o[..., 2] - o0[..., 2]) + ((self.o[..., 0] - o0[..., 0])**2 + (self.o[..., 1] - o0[..., 1])**2) / (2 * (self.o[..., 2] - o0[..., 2]))
-                self.opl = self.opl + opd
+                raise Warning('Use float64 in coherent ray tracing.')
             else:
                 self.opl = self.opl + n * t
 

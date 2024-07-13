@@ -44,7 +44,6 @@ def backward_integral(ray, img, ps, H, W, interpolate=True, pad=True, energy_cor
         idx_i = H - v.ceil().long() + 1
         idx_j = u.floor().long() + 1
     else:
-        # FIXME: solve the +1 problem
         # ====> Convert ray positions to uv coordinates
         # convert to pixel position in texture(image) coordinate. we do padding so texture corrdinates should add 1
         u = torch.clamp(W/2 + p[..., 0] / ps, min=0.01, max=W-1.01)
@@ -57,50 +56,24 @@ def backward_integral(ray, img, ps, H, W, interpolate=True, pad=True, energy_cor
     # gradients are stored in weight parameters
     w_i = v - v.floor().long()
     w_j = u.ceil().long() - u
+    
+    if interpolate: # Bilinear interpolation
+        # img shape [B, N, H', W'], idx_i shape [spp, H, W], w_i shape [spp, H, W], out_img shape [N, C, spp, H, W]
+        out_img =  img[...,idx_i, idx_j] * w_i * w_j
+        out_img += img[...,idx_i+1, idx_j] * (1-w_i) * w_j
+        out_img += img[...,idx_i, idx_j+1] * w_i * (1-w_j)
+        out_img += img[...,idx_i+1, idx_j+1] * (1-w_i) * (1-w_j)
 
-
-    if ray.coherent:
-        raise Exception('Backward coherent integral needs to be checked.')
-        if interpolate:
-            delta_phi = torch.fmod(ray.phi, 2 * np.pi)
-
-            # out_img shape [B, C, spp, H, W]
-            out_img =  torch.sqrt(img[...,idx_i, idx_j]) * w_i * w_j * torch.exp(1j * delta_phi)
-            out_img += torch.sqrt(img[...,idx_i+1, idx_j]) * (1-w_i) * w_j * torch.exp(1j * delta_phi)
-            out_img += torch.sqrt(img[...,idx_i, idx_j+1]) * w_i * (1-w_j) * torch.exp(1j * delta_phi)
-            out_img += torch.sqrt(img[...,idx_i+1, idx_j+1]) * (1-w_i) * (1-w_j) * torch.exp(1j * delta_phi)
-
-        else:
-            out_img =  torch.sqrt(img[...,idx_i, idx_j]) * torch.exp(1j * delta_phi) #* ray.en
-        
-        field_u = (torch.sum(out_img * ray.ra * energy_correction, -3) + 1e-9) / (torch.sum(ray.ra, -3) + 1e-6)
-        return field_u
-        
     else:
-        if interpolate: # Bilinear interpolation
-            # img shape [B, N, H', W'], idx_i shape [spp, H, W], w_i shape [spp, H, W], out_img shape [N, C, spp, H, W]
-            # diff mode, different rays have different weights, do not consider vignetting
-            out_img =  img[...,idx_i, idx_j] * w_i * w_j
-            out_img += img[...,idx_i+1, idx_j] * (1-w_i) * w_j
-            out_img += img[...,idx_i, idx_j+1] * w_i * (1-w_j)
-            out_img += img[...,idx_i+1, idx_j+1] * (1-w_i) * (1-w_j)
+        out_img =  img[...,idx_i, idx_j]
 
-        else:
-            out_img =  img[...,idx_i, idx_j]
-
-        # Monte-Carlo integration
-        output = (torch.sum(out_img * ray.ra * energy_correction, -3) + 1e-9) / (torch.sum(ray.ra, -3) + 1e-6)
-        return output
+    # Monte-Carlo integration
+    output = (torch.sum(out_img * ray.ra * energy_correction, -3) + 1e-9) / (torch.sum(ray.ra, -3) + 1e-6)
+    return output
 
 
 def forward_integral(ray, ps, ks, pointc_ref=None, coherent=False):
     """ Forward integral model, including PSF and vignetting
-
-    Common bugs:
-        1, When you got index out of range, it is usually a memory issue.
-        2, 
-
-    TODO: obliq is currently unused
 
     Args:
         ray: Ray object. Shape of ray.o is [spp, N, 3].
@@ -114,7 +87,7 @@ def forward_integral(ray, ps, ks, pointc_ref=None, coherent=False):
         psf: point spread function, shape [N, ks, ks]
     """
     single_point = True if len(ray.o.shape) == 2 else False
-    points = - ray.o[..., :2]       # shape [spp, N, 2] or [spp, 2]. flip points. TODO: can we find a better way to do this?
+    points = - ray.o[..., :2]       # shape [spp, N, 2] or [spp, 2].
     psf_range = [(- ks / 2 + 0.5) * ps, (ks / 2 - 0.5) * ps]    # this ensures the pixel size doesnot change in assign_points_to_pixels function
     
     # ==> PSF center
@@ -131,7 +104,7 @@ def forward_integral(ray, ps, ks, pointc_ref=None, coherent=False):
     points_shift = points_shift * ra.unsqueeze(-1)
     
     # ==> Monte Carlo integral
-    # Incoherent ray tracing, integral over intensity
+    # Incoherent ray tracing
     if not coherent: 
         if single_point:
             obliq = ray.d[:, 2]**2
@@ -148,7 +121,7 @@ def forward_integral(ray, ps, ks, pointc_ref=None, coherent=False):
             
             psf = torch.stack(psf, dim=0)   # shape [N, ks, ks]
     
-    # Coherent ray tracing, integral over complex amplitude
+    # Coherent ray tracing
     else:
         if single_point:
             obliq = ray.d[:, 2]     # from [spp, 3] to [spp], for amplitude correction. 
@@ -216,11 +189,6 @@ def assign_points_to_pixels(points, ks, x_range, y_range, ra, interpolate=True, 
         # ==> Use advanced indexing to increment the count for each corresponding pixel
         if coherent:
             grid = torch.zeros(ks, ks).to(device) + 0j
-            # grid.index_put_(tuple(pixel_indices_tl.t()), (1-w_b)*(1-w_r)*ra*torch.exp(1j*phase), accumulate=True)
-            # grid.index_put_(tuple(pixel_indices_tr.t()), (1-w_b)*w_r*ra*torch.exp(1j*phase), accumulate=True)
-            # grid.index_put_(tuple(pixel_indices_bl.t()), w_b*(1-w_r)*ra*torch.exp(1j*phase), accumulate=True)
-            # grid.index_put_(tuple(pixel_indices_br.t()), w_b*w_r*ra*torch.exp(1j*phase), accumulate=True)
-
             grid.index_put_(tuple(pixel_indices_tl.t()), (1-w_b)*(1-w_r)*ra*obliq*torch.exp(1j*phase), accumulate=True)
             grid.index_put_(tuple(pixel_indices_tr.t()), (1-w_b)*w_r*ra*obliq*torch.exp(1j*phase), accumulate=True)
             grid.index_put_(tuple(pixel_indices_bl.t()), w_b*(1-w_r)*ra*obliq*torch.exp(1j*phase), accumulate=True)
@@ -228,11 +196,6 @@ def assign_points_to_pixels(points, ks, x_range, y_range, ra, interpolate=True, 
 
         else:
             grid = torch.zeros(ks, ks).to(points.device)
-            # grid.index_put_(tuple(pixel_indices_tl.t()), (1-w_b)*(1-w_r)*ra, accumulate=True)
-            # grid.index_put_(tuple(pixel_indices_tr.t()), (1-w_b)*w_r*ra, accumulate=True)
-            # grid.index_put_(tuple(pixel_indices_bl.t()), w_b*(1-w_r)*ra, accumulate=True)
-            # grid.index_put_(tuple(pixel_indices_br.t()), w_b*w_r*ra, accumulate=True)
-
             grid.index_put_(tuple(pixel_indices_tl.t()), (1-w_b)*(1-w_r)*ra*obliq, accumulate=True)
             grid.index_put_(tuple(pixel_indices_tr.t()), (1-w_b)*w_r*ra*obliq, accumulate=True)
             grid.index_put_(tuple(pixel_indices_bl.t()), w_b*(1-w_r)*ra*obliq, accumulate=True)
@@ -244,8 +207,6 @@ def assign_points_to_pixels(points, ks, x_range, y_range, ra, interpolate=True, 
 
         if coherent:
             raise Warning("Need to check sub-pixel phase shift.")
-            grid = torch.zeros(ks, ks).to(points.device) + 0j
-            grid.index_put_(tuple(pixel_indices_tl.t()), ra*torch.exp(1j*phase), accumulate=True)
 
         else:
             grid = torch.zeros(ks, ks).to(points.device)

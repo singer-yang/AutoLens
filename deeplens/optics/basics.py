@@ -53,7 +53,7 @@ HYPER_SPEC_RANGE = [0.42, 0.66] # [um]. reference 400nm to 700nm, 20nm step size
 HYPER_SPEC_BAND = 49    # 5nm/step, according to "Shift-variant color-coded diffractive spectral imaging system"
 
 DEPTH = - 20000.0
-GEO_SPP = 10000   # spp for geometric optics calculation (psf)
+GEO_SPP = 1000   # spp for geometric optics calculation (psf)
 COHERENT_SPP = 1000000 # spp for coherent optics calculation
 
 GEO_GRID = 21   # grid number for geometric optics calculation (PSF map)

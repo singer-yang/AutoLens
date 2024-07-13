@@ -37,8 +37,6 @@ def render_psf(img, psf, noise=None):
 def render_psf_map(img, psf_map, grid, noise=None):
     """ Render an image with PSF map. Use the spatially-varying PSF kernels for the image.
 
-        FIXME: rounding error when grid is not divisible by H or W. Still not addressed...
-
         Args:
             img (torch.Tensor): [B, 3, H, W]
             psf_map (torch.Tensor): [3, grid*ks, grid*ks]
