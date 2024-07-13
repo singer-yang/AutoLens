@@ -1,5 +1,5 @@
 from .version import __version__
-from .basics import *
 from .optics import *
-from .surfaces import *
+# from .network import *
 from .utils import *
+from .geolens import *

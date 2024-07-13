@@ -1,41 +1,50 @@
 # AutoLens
 
-Automated lens design from scratch using [DeepLens](https://github.com/singer-yang/DeepLens).
+Automated lens design from scratch using gradient backpropagation + deep learning. This project is built on the top of [DeepLens](https://github.com/singer-yang/DeepLens) framework.
 
-Why AutoLens performs better than Zemax/CodeV lens design: **gradient calculation + Adam optimizer = better optimization capability!**
+We are planning to to build AutoLens as an open-source lens design software, imaging an open-source Zemax. Other algorithms (for example, end-to-end lens design and implicit representation) will be updated in DeepLens. Welcome to join us if you are interested in optical design! Contact Xinge Yang (xinge.yang@kaust.edu.sa)
 
-#### How to run
+## How to run
 
-1. clone or download this repo
-2. run ``python auto_lens_design.py``
+**Method 1**
 
-or
+1. git clone or download this repo
+2. run ``python autolens.py``
 
-[Click here](https://colab.research.google.com/github/singer-yang/AutoLens/blob/main/auto_lens_design.ipynb) to run it in Google Colab.
+**Method 2**
 
+Run it in Google Colab  
 
-#### Lens Design Examples
+<a target="_blank" href="https://colab.research.google.com/github/singer-yang/AutoLens/blob/main/autolens.ipynb">
+  <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
+</a>
 
-1. A video of automated design of a FoV 80deg, F/2.0, 4.55mm focal length.
+**Method 3**
 
-<div style="text-align:center;">
-    <img src="imgs/lens_design.gif" alt="AutoLens" style="width:450px; height:400px;"/>
-</div>
+Use our packaged .exe file (upcoming)
 
-2. 20 random automated lens design results for FoV 80deg, F/2.0, 4.55mm focal length.
+## Lens Design Examples
 
-<div style="text-align:center;">
-    <img src="imgs/lens_design.png" alt="AutoLens" style="width:800px; height:550px;"/>
-</div>
-
-3. An aspherical lens (optimizing for 50k iterations) with outstanding optical performance.
+1. Example automated lens design of (left) FoV 80deg, F/2.0, 4.55mm focal length, and (right) Full-frame, F/3.0, 50mm focal length.
 
 <div style="text-align:center;">
-    <img src="imgs/cellphone_example.png" alt="AutoLens" style="width:800px"/>
+    <img src="imgs/lens_design1.gif" alt="AutoLens" style="height:300px;"/>
+    <img src="imgs/lens_design2.gif" alt="AutoLens" style="height:300px;"/>
 </div>
 
+1. 20 random automated lens design results for FoV 80deg, F/2.0, 4.55mm focal length.
 
-#### If you find this repo helpful, please cite our paper:
+<div style="text-align:center;">
+    <img src="imgs/lens_design.png" alt="AutoLens"/>
+</div>
+
+3. An aspherical lens with outstanding optical performance.
+
+<div style="text-align:center;">
+    <img src="imgs/cellphone_example.png" alt="AutoLens"/>
+</div>
+
+## If you find this repo helpful, please cite our paper:
 
 ```
 @article{yang2023curriculum,
@@ -45,7 +54,3 @@ or
   year={2023}
 }
 ```
-
-#### License
-
-`<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc/4.0/88x31.png" />``</a><br />`This work is licensed under a `<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">`Creative Commons Attribution-NonCommercial 4.0 International License `</a>`.
