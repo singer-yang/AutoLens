@@ -2,6 +2,8 @@
 
 Automated lens design from scratch using gradient backpropagation + deep learning. This project is built on the top of [DeepLens](https://github.com/singer-yang/DeepLens) framework.
 
+**[News 01/21/2025] Please use automated lens design example in DeepLens repo, as currently I do not have enough time to update this repo. But we will find a way to extend this repo.**
+
 We are planning to to build AutoLens as an open-source lens design software, imaging an open-source Zemax. Other algorithms (for example, end-to-end lens design and implicit representation) will be updated in DeepLens. Welcome to join us if you are interested in optical design! Contact Xinge Yang (xinge.yang@kaust.edu.sa)
 
 ## How to run
