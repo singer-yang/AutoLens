@@ -1,58 +1,63 @@
 # AutoLens
 
-Automated lens design from scratch using gradient backpropagation + deep learning. This project is built on the top of [DeepLens](https://github.com/singer-yang/DeepLens) framework.
+AutoLens is an open-source automated lens design framework that uses gradient backpropagation and deep learning techniques to optimize optical systems from scratch. Built on top of the [DeepLens](https://github.com/singer-yang/DeepLens) framework, AutoLens aims to provide a modern, AI-driven approach to optical design.
 
-**[News 01/21/2025] Please use automated lens design example in DeepLens repo, as currently I do not have enough time to update this repo. But we will find a way to extend this repo.**
+## News
 
-We are planning to to build AutoLens as an open-source lens design software, imaging an open-source Zemax. Other algorithms (for example, end-to-end lens design and implicit representation) will be updated in DeepLens. Welcome to join us if you are interested in optical design! Contact Xinge Yang (xinge.yang@kaust.edu.sa)
+**[01/21/2025]** Please use the automated lens design examples in the DeepLens repository, as we currently don't have enough resources to maintain this repository. We are working on ways to extend and improve this project.
 
-## How to run
+## About
 
-**Method 1**
+AutoLens is being developed as open-source lens design software, aiming to provide capabilities similar to commercial tools like Zemax. The project incorporates advanced algorithms including end-to-end lens design and implicit representation techniques, with ongoing updates in the DeepLens framework.
 
-1. git clone or download this repo
-2. run ``python autolens.py``
+We welcome contributions from the community! If you're interested in optical design and AI, please contact Xinge Yang at xinge.yang@kaust.edu.sa.
 
-**Method 2**
+## Getting Started
 
-Run it in Google Colab  
+### Method 1: Local Installation
+1. Clone or download this repository
+2. Run `python autolens.py`
 
-<a target="_blank" href="https://colab.research.google.com/github/singer-yang/AutoLens/blob/main/autolens.ipynb">
-  <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
-</a>
+### Method 2: Google Colab
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/singer-yang/AutoLens/blob/main/autolens.ipynb)
 
-**Method 3**
-
-Use our packaged .exe file (upcoming)
+### Method 3: Packaged Executable (Coming Soon)
+We are working on a packaged .exe version for easier deployment.
 
 ## Lens Design Examples
 
-1. Example automated lens design of (left) FoV 80deg, F/2.0, 4.55mm focal length, and (right) Full-frame, F/3.0, 50mm focal length.
+### Example 1: Wide-Angle Lens
+- Field of View: 80°
+- F-number: 2.0
+- Focal Length: 4.55mm
 
-<div style="text-align:center;">
-    <img src="imgs/lens_design1.gif" alt="AutoLens" style="height:300px;"/>
-    <img src="imgs/lens_design2.gif" alt="AutoLens" style="height:300px;"/>
-</div>
+![Wide-Angle Lens Design](imgs/lens_design1.gif)
 
-1. 20 random automated lens design results for FoV 80deg, F/2.0, 4.55mm focal length.
+### Example 2: Full-Frame Lens
+- Field of View: Full-frame
+- F-number: 3.0
+- Focal Length: 50mm
 
-<div style="text-align:center;">
-    <img src="imgs/lens_design.png" alt="AutoLens"/>
-</div>
+![Full-Frame Lens Design](imgs/lens_design2.gif)
 
-3. An aspherical lens with outstanding optical performance.
+### Example 3: Randomized Designs
+20 random automated lens design results for FoV 80°, F/2.0, 4.55mm focal length.
 
-<div style="text-align:center;">
-    <img src="imgs/cellphone_example.png" alt="AutoLens"/>
-</div>
+![Randomized Designs](imgs/lens_design.png)
 
-## If you find this repo helpful, please cite our paper:
+### Example 4: Aspherical Lens
+An aspherical lens demonstrating outstanding optical performance.
 
-```
+![Aspherical Lens](imgs/cellphone_example.png)
+
+## Citation
+
+If you find this repository helpful, please cite our paper:
+
+```bibtex
 @article{yang2023curriculum,
   title={Curriculum learning for ab initio deep learned refractive optics},
   author={Yang, Xinge and Fu, Qiang and Heidrich, Wolfgang},
   journal={arXiv preprint arXiv:2302.01089},
   year={2023}
 }
-```
